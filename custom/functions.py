@@ -23,9 +23,9 @@ logger = logging.getLogger(__name__)
 
 # Specify the URL to your package here.
 # This URL must be accessible via pip install
-PACKAGE_URL = 'git+https://github.com/IBM/iot-analytics-anomaly'
+PACKAGE_URL = 'git+https://github.com/rojithakamal/iot-analytics-anomaly'
 
-class InvokeWMLModel(BaseTransformer):
+class InvokeWMLModel_isoMds(BaseTransformer):
     # _allow_empty_df = True  # allow this task to run even if it receives no incoming data
     # produces_output_items = False  # this task does not contribute new data items
     # requires_input_items = True  # this task does not require dependent data items
@@ -86,6 +86,12 @@ class InvokeWMLModel(BaseTransformer):
                 s_df = df
 
             wml_model_endpoint = '%s/v3/wml_instances/%s/deployments/%s/online' %(wml_endpoint, instance_id, deployment_id)
+            print (wml_model_endpoint)
+            print ('header')
+            print (headers)
+            print ('payload')
+            #print (payload)
+            #wml_model_endpoint = 'https://us-south.ml.cloud.ibm.com/ml/v4/deployments/718e908c-fbcf-4192-b524-1fb16ee3316e/predictions?version=2021-03-22'
             r = requests.post( wml_model_endpoint, json=payload, headers=headers )
             # should return json containing same number of predictions
             logging.debug('model response code: ' + str(r.status_code) )
