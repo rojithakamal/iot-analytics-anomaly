@@ -51,7 +51,8 @@ class InvokeWMLModel_isoMds(BaseTransformer):
         # Taken from https://github.ibm.com/Shuxin-Lin/anomaly-detection/blob/master/Invoke-WML-Scoring.ipynb
         # Get an IAM token from IBM Cloud
         logging.debug("Posting enitity data to WML model")
-        url     = "https://iam.bluemix.net/oidc/token"
+        #url     = "https://iam.bluemix.net/oidc/token"
+        url="https://iam.cloud.ibm.com/identity/token"
         headers = { "Content-Type" : "application/x-www-form-urlencoded" }
         data    = "apikey=" + apikey + "&grant_type=urn:ibm:params:oauth:grant-type:apikey"
         response  = requests.post( url, headers=headers, data=data, auth=( uid, password ) )
@@ -80,20 +81,28 @@ class InvokeWMLModel_isoMds(BaseTransformer):
             elif (len(input_columns) > 1):
                 s_df = df[input_columns]
                 rows = [list(r) for i,r in s_df.iterrows()]
-                payload = {"values": rows}
+                columns = ['drvn_t1', 'drvn_t2', 'drvn_p1', 'drvn_p2', 'drvn_flow']
+                #payload = {"values": rows}
+                #payload = {"input_data": columns,"values": rows }
+                payload = {"input_data": [{"fields": ['drvn_t1', 'drvn_t2', 'drvn_p1', 'drvn_p2', 'drvn_flow'],
+                                                   "values": rows}]}
             else:
                 logging.debug("no input columns provided, forwarding all")
                 s_df = df
 
-            wml_model_endpoint = '%s/v3/wml_instances/%s/deployments/%s/online' %(wml_endpoint, instance_id, deployment_id)
+            #wml_model_endpoint = '%s/v3/wml_instances/%s/deployments/%s/online' %(wml_endpoint, instance_id, deployment_id)
+            wml_model_endpoint='https://us-south.ml.cloud.ibm.com/ml/v4/deployments/718e908c-fbcf-4192-b524-1fb16ee3316e/predictions?version=2021-03-22'
             print (wml_model_endpoint)
             print ('header')
             print (headers)
             print ('payload')
+
             #print (payload)
             #wml_model_endpoint = 'https://us-south.ml.cloud.ibm.com/ml/v4/deployments/718e908c-fbcf-4192-b524-1fb16ee3316e/predictions?version=2021-03-22'
             r = requests.post( wml_model_endpoint, json=payload, headers=headers )
             # should return json containing same number of predictions
+            print("Scoring response")
+            print(r.json())
             logging.debug('model response code: ' + str(r.status_code) )
             if r.status_code == 200:
                 logging.debug('model response')
