@@ -62,6 +62,8 @@ class InvokeWMLModel_isoMds(BaseTransformer):
             logging.error( response.reason )
             return []
         else:
+            print ('api response')
+            print (response.json())
             logging.debug('token successfully generated')
             iam_token = response.json()["access_token"]
             # Send data to deployed model for processing
@@ -141,8 +143,13 @@ class InvokeWMLModel_isoMds(BaseTransformer):
         if results:
             logging.debug('results received' )
             # df.loc[:, self.output_items] = results['values']
-            # df[self.output_items] = results['values']
-            df[self.output_items] = [i[0] for i in results['values'] ]
+            #df[self.output_items] = results['values']
+            #json_predict = results.json()
+            menu = results['predictions'][0]['values']
+            #df[self.output_items] = [i[0] for i in results['values'] ]
+            df[self.output_items] =results['predictions'][0]['values']
+            print ('finally done...')
+
         else:
             logging.error('error invoking external model')
         logging.debug(df[self.output_items].dtype.name)
