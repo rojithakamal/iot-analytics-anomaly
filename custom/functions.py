@@ -147,7 +147,10 @@ class InvokeWMLModel_isoMds(BaseTransformer):
             #json_predict = results.json()
             menu = results['predictions'][0]['values']
             #df[self.output_items] = [i[0] for i in results['values'] ]
-            df[self.output_items] =results['predictions'][0]['values']
+            df[self.output_items] = [i[0] for i in results["predictions"][0]["values"]]
+            print ('datatype of df')
+            print (df[self.output_items].dtype.name)
+
             print ('finally done...')
 
         else:
